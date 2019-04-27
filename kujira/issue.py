@@ -64,3 +64,7 @@ def deserialize_issue_from_file(path_to_issue):
             issue_id=process_string(data.get('issue_id')),
         )
     return issue
+
+
+def serialize(issue):
+    return str(issue)

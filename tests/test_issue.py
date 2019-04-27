@@ -1,7 +1,6 @@
 from pytest import fixture
 
-from kujira.issue import IssueModel, deserialize_issue_from_file
-
+from kujira.issue import IssueModel, deserialize_issue_from_file, serialize
 
 PATH_TO_VADER_FILE = 'tests/fixtures/darth_vader.jira_issue.yml'
 
@@ -102,6 +101,27 @@ description: |
 
 
 class TestDeserializeIssue:
-    def test_wired(self, vader_issue):
+    def test_it_reads_yaml_file_and_returns_issue_model(self, vader_issue):
         issue = deserialize_issue_from_file(PATH_TO_VADER_FILE)
         assert issue == vader_issue
+
+
+class TestSerializeIssue:
+    def test_it_takes_issue_and_returns_a_string_representation(self, vader_issue):
+        expected = """\
+project: Death-Star
+issue_id: Death-Star-1610
+
+summary: |
+    Your lack of faith
+
+assignee: Motti
+
+reporter: Vader
+
+priority: 3
+
+description: |
+    I find your lack of faith disturbing.
+"""
+        assert expected == serialize(vader_issue)
