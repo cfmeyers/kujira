@@ -7,7 +7,21 @@ import os
 
 from jira import JIRA
 
-Config = namedtuple('Config', 'user api_key server_url')
+Config = namedtuple(
+    'Config', 'user api_key server_url default_project default_issue_type'
+)
+
+ISSUE_TYPES = (
+    'Epic',
+    'Bug',
+    'Task',
+    'Story',
+    'Subtask',
+    'Incident',
+    'Service request',
+    'Change',
+    'Problem',
+)
 
 
 def read_config(config_path='~/.jira_config.ini'):
@@ -17,10 +31,12 @@ def read_config(config_path='~/.jira_config.ini'):
         user=cfg['Jira']['user'],
         api_key=cfg['Jira']['api_key'],
         server_url=cfg['Jira']['server_url'],
+        default_project=cfg['Jira']['default_project'],
+        default_issue_type=cfg['Jira']['default_issue_type'],
     )
 
 
-def get_conn():
+def get_conn(config):
     config = read_config()
     options = {'server': config.server_url}
 
@@ -49,3 +65,20 @@ def transition_issue(conn, issue, transition_name):
 
 def get_issue_summary(issue):
     return f'{issue.key}: {issue.fields.summary}'
+
+
+def create_new_issue(
+    conn, config, summary, description, issue_type=None, project_name=None
+):
+    if project_name is None:
+        project_name = config.default_project
+    if issue_type is None:
+        issue_type = config.default_issue_type
+
+    new_issue = conn.create_issue(
+        project=project_name,
+        summary=summary,
+        description=description,
+        issuetype={'name': issue_type},
+    )
+    return new_issue
