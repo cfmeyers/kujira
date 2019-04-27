@@ -31,3 +31,21 @@ def get_open_issues(conn):
     return conn.search_issues(
         'resolution = unresolved and assignee=currentuser() ORDER BY created'
     )
+
+
+def get_issue_by_id(conn, id):
+    return conn.issue(id)
+
+
+def transition_issue(conn, issue, transition_name):
+    transitions = conn.transitions(issue)
+    for tns in transitions:
+        if tns['name'] == transition_name:
+            reopen_id = tns['id']
+            conn.transition_issue(issue, reopen_id)
+            return True
+    return False
+
+
+def get_issue_summary(issue):
+    return f'{issue.key}: {issue.fields.summary}'
