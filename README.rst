@@ -27,10 +27,15 @@ A set of scripts for managing Jira using jira-python
 * Documentation: https://kujira.readthedocs.io.
 
 
-Features
+Todo
 --------
 
-* TODO
+* add transition to next status
+   * make deafault statuses in jiraconfig
+* add comments to ticket
+* add epics to ticket
+
+
 
 Credits
 -------
