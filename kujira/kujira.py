@@ -7,8 +7,16 @@ import os
 
 from jira import JIRA
 
+from kujira.issue import (
+    deserialize_issue_from_API,
+    make_new_issue_template,
+    deserialize_issue_from_file,
+)
+from kujira.edit import edit
+
 Config = namedtuple(
-    'Config', 'user api_key server_url default_project default_issue_type'
+    'Config',
+    'user api_key server_url default_project default_issue_type default_priority user_key',
 )
 
 ISSUE_TYPES = (
@@ -33,6 +41,8 @@ def read_config(config_path='~/.jira_config.ini'):
         server_url=cfg['Jira']['server_url'],
         default_project=cfg['Jira']['default_project'],
         default_issue_type=cfg['Jira']['default_issue_type'],
+        default_priority=cfg['Jira']['default_priority'],
+        user_key=cfg['Jira']['user_key'],
     )
 
 
@@ -64,21 +74,22 @@ def transition_issue(conn, issue, transition_name):
 
 
 def get_issue_summary(issue):
-    return f'{issue.key}: {issue.fields.summary}'
+    issue_model = deserialize_issue_from_API(issue)
+    return issue_model
 
 
-def create_new_issue(
-    conn, config, summary, description, issue_type=None, project_name=None
-):
-    if project_name is None:
-        project_name = config.default_project
-    if issue_type is None:
-        issue_type = config.default_issue_type
-
+def create_new_issue(conn, config):
+    issue_template = make_new_issue_template(config)
+    issue = edit(issue_template)
+    if issue.summary == 'pending...':
+        print('Need to fill out summary.  Issue uncreated.')
+        return
+    print(str(issue))
     new_issue = conn.create_issue(
-        project=project_name,
-        summary=summary,
-        description=description,
-        issuetype={'name': issue_type},
+        project=issue.project,
+        summary=issue.summary,
+        description=issue.description,
+        issuetype={'name': issue.issue_type},
+        assignee={'name': issue.assignee},
     )
     return new_issue

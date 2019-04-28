@@ -48,6 +48,15 @@ def fix_issue(issue_id):
 
 @main.command()
 @click.argument('issue_id', type=str)
+def get_issue(issue_id):
+    config = read_config()
+    conn = get_conn(config)
+    issue = get_issue_by_id(conn, issue_id)
+    print(get_issue_summary(issue))
+
+
+@main.command()
+@click.argument('issue_id', type=str)
 def rm(issue_id):
     config = read_config()
     conn = get_conn(config)
@@ -59,10 +68,8 @@ def rm(issue_id):
 def new():
     config = read_config()
     conn = get_conn(config)
-    summary = 'Test jira issue for XFL'
-    description = 'Just a test'
-    new_issue = create_new_issue(conn, config, summary, description)
-    click.echo(get_issue_summary(new_issue))
+    new_issue = create_new_issue(conn, config)
+    click.echo(new_issue)
 
 
 if __name__ == "__main__":

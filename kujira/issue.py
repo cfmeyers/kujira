@@ -3,9 +3,18 @@ import yaml
 
 class IssueModel:
     def __init__(
-        self, project, assignee, reporter, summary, description, priority, issue_id=None
+        self,
+        project,
+        issue_type,
+        assignee,
+        reporter,
+        summary,
+        description,
+        priority,
+        issue_id=None,
     ):
         self.project = project
+        self.issue_type = issue_type
         self.assignee = assignee
         self.reporter = reporter
         self.summary = summary
@@ -16,6 +25,7 @@ class IssueModel:
     def __eq__(self, other):
         return (
             (self.project == other.project)
+            and (self.issue_type == other.issue_type)
             and (self.assignee == other.assignee)
             and (self.reporter == other.reporter)
             and (self.summary == other.summary)
@@ -28,6 +38,7 @@ class IssueModel:
         return f"""\
 project: {self.project}
 issue_id: { self.issue_id }
+issue_type: { self.issue_type }
 
 summary: |
     {self.summary}
@@ -44,7 +55,7 @@ description: |
 
     def __repr__(self):
         return f"""\
-IssueModel(project='{self.project}', assignee='{self.assignee}', reporter='{self.reporter}', summary='{self.summary}', priority='{self.priority}', issue_id='{self.issue_id}')"""
+IssueModel(project='{self.project}', issue_type='{self.issue_type}', assignee='{self.assignee}', reporter='{self.reporter}', summary='{self.summary}', priority='{self.priority}', issue_id='{self.issue_id}')"""
 
 
 def process_string(item):
@@ -62,9 +73,37 @@ def deserialize_issue_from_file(path_to_issue):
             description=process_string(data['description']),
             priority=process_string(str(data['priority'])),
             issue_id=process_string(data.get('issue_id')),
+            issue_type=process_string(data.get('issue_type')),
         )
     return issue
 
 
+def deserialize_issue_from_API(jira_issue):
+    return IssueModel(
+        issue_id=jira_issue.key,
+        project=jira_issue.fields.project.key,
+        assignee=jira_issue.fields.assignee.key,
+        reporter=jira_issue.fields.reporter.key,
+        summary=jira_issue.fields.summary,
+        description=jira_issue.fields.description,
+        priority=jira_issue.fields.priority.name,
+        issue_type=jira_issue.fields.issuetype.name,
+    )
+
+
 def serialize(issue):
+    return str(issue)
+
+
+def make_new_issue_template(config):
+    issue = IssueModel(
+        project=process_string(config.default_project),
+        assignee=process_string(config.user_key),
+        reporter='None',
+        summary=process_string('pending...'),
+        description=process_string('pending...'),
+        priority=process_string(str(config.default_priority)),
+        issue_id=process_string('None'),
+        issue_type=process_string(config.default_issue_type),
+    )
     return str(issue)
