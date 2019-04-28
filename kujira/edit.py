@@ -27,9 +27,4 @@ def edit(template):
 
     proc = subprocess.Popen(args, close_fds=True, stdout=None)
     proc.communicate()
-    # print(temp_file.name)
-
-    # with open(temp_file.name, 'r') as f:
-    #     results = f.read()
-    # return results
     return deserialize_issue_from_file(temp_file.name)
