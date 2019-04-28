@@ -59,6 +59,11 @@ def get_open_issues(conn):
     )
 
 
+def get_issues_for_status(conn, status):
+    query = f'assignee=currentuser() and status="{status}" ORDER BY created'
+    return conn.search_issues(query)
+
+
 def get_issue_by_id(conn, id):
     return conn.issue(id)
 
@@ -73,9 +78,14 @@ def transition_issue(conn, issue, transition_name):
     return False
 
 
-def get_issue_summary(issue):
+def get_printable_issue(issue):
     issue_model = deserialize_issue_from_API(issue)
     return issue_model
+
+
+def get_printable_issue_brief(issue):
+    issue_model = deserialize_issue_from_API(issue)
+    return f'{issue_model.issue_id} | {issue_model.summary}'
 
 
 def create_new_issue(conn, config):
