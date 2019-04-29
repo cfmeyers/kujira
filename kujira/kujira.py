@@ -59,6 +59,10 @@ def get_open_issues(conn):
     )
 
 
+def get_all_epics(conn, project_name='Infralytics'):
+    return conn.search_issues(f'issuetype="Epic" AND project="{project_name}"')
+
+
 def get_issues_for_status(conn, status):
     query = f'assignee=currentuser() and status="{status}" ORDER BY created'
     return conn.search_issues(query)
