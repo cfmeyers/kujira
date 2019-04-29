@@ -91,9 +91,9 @@ def epics_for_project(project_name):
     config = read_config()
     conn = get_conn(config)
     epic_issues = get_all_epics(conn, project_name)
-    ids_and_summaries = [(i.id, i.fields.summary) for i in epic_issues]
+    ids_and_summaries = [(i.fields.summary, i.id) for i in epic_issues]
     for issue in ids_and_summaries:
-        click.echo(f'{issue[0]}, {issue[1]}')
+        click.echo(f'{issue[0]} ({issue[1]})')
 
 
 @main.command()
