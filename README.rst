@@ -30,8 +30,7 @@ A set of scripts for managing Jira using jira-python
 Todo
 --------
 
-* add transition to next status
-   * make deafault statuses in jiraconfig
+* make deafault statuses in jiraconfig
 * add comments to ticket
 * add epics to ticket
 
