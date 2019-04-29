@@ -68,6 +68,23 @@ def get_issue_by_id(conn, id):
     return conn.issue(id)
 
 
+NEXT_ACTION = {
+    'In Progress': 'Code Review',
+    'Code Review': 'Ready For Deployment',
+    'Ready For Deployment': 'Deployed',
+    'Resolved': 'Deployed',
+}
+
+
+def advance_issue(conn, issue):
+    status = issue.fields.status.name
+    transition_name = NEXT_ACTION.get(status)
+    if transition_name:
+        return transition_issue(conn, issue, transition_name)
+    else:
+        return False
+
+
 def transition_issue(conn, issue, transition_name):
     transitions = conn.transitions(issue)
     for tns in transitions:

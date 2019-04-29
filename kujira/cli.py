@@ -14,6 +14,7 @@ from kujira.kujira import (
     create_new_issue,
     get_issues_for_status,
     get_printable_issue_brief,
+    advance_issue,
 )
 
 
@@ -30,9 +31,6 @@ def mine():
     issues = get_open_issues(conn)
     for issue in issues:
         click.echo(get_printable_issue(issue))
-
-
-# <JIRA Project: key='XFL', name='Infralytics', id='14320'>
 
 
 @main.command()
@@ -64,6 +62,17 @@ def inspect(issue_id):
     conn = get_conn(config)
     issue = get_issue_by_id(conn, issue_id)
     breakpoint()
+
+
+@main.command()
+@click.argument('issue_id', type=str)
+def advance(issue_id):
+    config = read_config()
+    conn = get_conn(config)
+    issue = get_issue_by_id(conn, issue_id)
+    result = advance_issue(conn, issue)
+    if not result:
+        click.echo(f'Failed to transition, issue still {issue.fields.status.name}')
 
 
 @main.command()
