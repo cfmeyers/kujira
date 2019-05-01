@@ -1,4 +1,5 @@
 import yaml
+import re
 
 
 class IssueModel:
@@ -11,6 +12,7 @@ class IssueModel:
         summary,
         description,
         priority,
+        epic=None,
         issue_id=None,
     ):
         self.project = project
@@ -21,6 +23,14 @@ class IssueModel:
         self.description = description
         self.priority = priority
         self.issue_id = issue_id
+        self.epic = epic if epic else 'None'
+
+    @property
+    def epic_id(self):
+        try:
+            return re.findall(r'\((\d+)\)', self.epic)[0]
+        except:
+            return None
 
     def __eq__(self, other):
         return (
@@ -32,6 +42,7 @@ class IssueModel:
             and (self.description == other.description)
             and (self.priority == other.priority)
             and (self.issue_id == other.issue_id)
+            and (self.epic == other.epic)
         )
 
     def __str__(self):
@@ -47,6 +58,8 @@ assignee: { self.assignee }
 
 reporter: { self.reporter }
 
+epic: { self.epic }
+
 priority: { self.priority }
 
 description: |
@@ -55,7 +68,7 @@ description: |
 
     def __repr__(self):
         return f"""\
-IssueModel(project='{self.project}', issue_type='{self.issue_type}', assignee='{self.assignee}', reporter='{self.reporter}', summary='{self.summary}', priority='{self.priority}', issue_id='{self.issue_id}')"""
+IssueModel(project='{self.project}', issue_type='{self.issue_type}', assignee='{self.assignee}', reporter='{self.reporter}', summary='{self.summary}', priority='{self.priority}', issue_id='{self.issue_id}', epic='{self.epic}')"""
 
 
 def process_string(item):
@@ -74,6 +87,7 @@ def deserialize_issue_from_file(path_to_issue):
             priority=process_string(str(data['priority'])),
             issue_id=process_string(data.get('issue_id')),
             issue_type=process_string(data.get('issue_type')),
+            epic=process_string(data.get('epic')),
         )
     return issue
 
@@ -105,5 +119,6 @@ def make_new_issue_template(config):
         priority=process_string(str(config.default_priority)),
         issue_id=process_string('None'),
         issue_type=process_string(config.default_issue_type),
+        epic=process_string('None'),
     )
     return str(issue)

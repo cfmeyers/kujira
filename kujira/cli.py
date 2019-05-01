@@ -74,6 +74,8 @@ def advance(issue_id):
     result = advance_issue(conn, issue)
     if not result:
         click.echo(f'Failed to transition, issue still {issue.fields.status.name}')
+    else:
+        click.echo(f'Transitioned from {issue.fields.status.name} to {result}')
 
 
 @main.command()

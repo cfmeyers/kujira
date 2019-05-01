@@ -73,7 +73,8 @@ def get_issue_by_id(conn, id):
 
 
 NEXT_ACTION = {
-    'In Progress': 'Code Review',
+    'Backlog': 'Start Progress',
+    'In Progress': 'Pull Request',
     'Code Review': 'Ready For Deployment',
     'Ready For Deployment': 'Deployed',
     'Resolved': 'Deployed',
@@ -95,7 +96,7 @@ def transition_issue(conn, issue, transition_name):
         if tns['name'] == transition_name:
             reopen_id = tns['id']
             conn.transition_issue(issue, reopen_id)
-            return True
+            return transition_name
     return False
 
 
@@ -107,6 +108,11 @@ def get_printable_issue(issue):
 def get_printable_issue_brief(issue):
     issue_model = deserialize_issue_from_API(issue)
     return f'{issue_model.issue_id} | {issue_model.summary}'
+
+
+def update_current_issue(issue_key):
+    with open(os.path.expanduser('~/.jira/current_issue'), 'w') as f:
+        f.write(issue_key + '\n')
 
 
 def create_new_issue(conn, config):
@@ -123,4 +129,5 @@ def create_new_issue(conn, config):
         issuetype={'name': issue.issue_type},
         assignee={'name': issue.assignee},
     )
+    update_current_issue(new_issue.key)
     return new_issue
