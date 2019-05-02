@@ -110,9 +110,9 @@ def get_printable_issue_brief(issue):
     return f'{issue_model.issue_id} | {issue_model.summary}'
 
 
-def update_current_issue(issue_key):
+def update_current_issue(issue):
     with open(os.path.expanduser('~/.jira/current_issue'), 'w') as f:
-        f.write(issue_key + '\n')
+        f.write(get_printable_issue_brief(issue) + '\n')
 
 
 def create_new_issue(conn, config):
@@ -129,5 +129,5 @@ def create_new_issue(conn, config):
         issuetype={'name': issue.issue_type},
         assignee={'name': issue.assignee},
     )
-    update_current_issue(new_issue.key)
+    update_current_issue(new_issue)
     return new_issue
