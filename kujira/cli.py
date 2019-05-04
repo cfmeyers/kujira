@@ -92,28 +92,28 @@ def epics_for_project(project_name):
     config = read_config()
     conn = get_conn(config)
     for e in get_all_epics(conn, project_name):
-        click.echo(f'{e.fields.summary} ({e.id})')
+        click.echo(f'{e.fields.summary} ({e.key})')
 
 
 @main.command()
 @click.argument('issue_id', type=str)
-@click.argument('epic_id', type=str)
-def add_epic_to_issue(issue_id, epic_id):
+@click.argument('epic_key', type=str)
+def add_epic_to_issue(issue_id, epic_key):
     config = read_config()
     conn = get_conn(config)
     issue = get_issue_by_id(conn, issue_id)
     try:
-        epic_issue = get_issue_by_id(conn, epic_id)
+        epic_issue = get_issue_by_id(conn, epic_key)
     except Exception as e:
-        click.echo(f'Could not find an epic with the id {epic_id}')
+        click.echo(f'Could not find an epic with the id {epic_key}')
     try:
         associate_epic_to_issue(conn, issue, epic_issue)
         issue = get_issue_by_id(conn, issue_id)
-        confirmed_epic_id = issue.fields.customfield_10910
-        click.echo(f'Added epic {confirmed_epic_id} to {issue_id}')
+        confirmed_epic_key = issue.fields.customfield_10910
+        click.echo(f'Added epic {confirmed_epic_key} to {issue_id}')
     except Exception as e:
         breakpoint()
-        click.echo(f'Could not add epic {epic_id} to {issue_id}')
+        click.echo(f'Could not add epic {epic_key} to {issue_id}')
 
 
 @main.command()

@@ -37,7 +37,7 @@ class TestIssue:
             summary='Your lack of faith',
             description='I find your lack of faith disturbing.',
             priority='3',
-            epic='Customer Experience (226523)',
+            epic='Customer Experience (DS-100)',
         )
         assert issue.project == 'Death-Star'
         assert issue.assignee == 'Motti'
@@ -47,7 +47,8 @@ class TestIssue:
         assert issue.priority == '3'
         assert issue.issue_type == 'Task'
         assert issue.issue_id is None
-        assert issue.epic == 'Customer Experience (226523)'
+        assert issue.epic == 'Customer Experience (DS-100)'
+        assert issue.epic_key == 'DS-100'
 
     def test_two_issues_are_equal_if_their_attributes_are_equal(self):
         first_issue = IssueModel(
@@ -72,9 +73,9 @@ class TestIssue:
 
         assert first_issue == second_issue
 
-    def test_it_parses_epic_ids(self, vader_issue):
-        vader_issue.epic = 'Hello (123)'
-        assert '123' == vader_issue.epic_id
+    def test_it_parses_epic_keys(self, vader_issue):
+        vader_issue.epic = 'Hello (D_123)'
+        assert 'D_123' == vader_issue.epic_key
 
     def test_two_issues_are_not_equal_if_at_least_one_of_their_attributes_are_not_equal(
         self

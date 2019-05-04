@@ -35,6 +35,7 @@ Todo
 * add ability to specify custom field for epics
 * use epic's issue key in epic dump field
 * use epic's issue key in to add epic to issue
+* make json file for reading in transitions
 
 
 

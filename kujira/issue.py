@@ -26,9 +26,9 @@ class IssueModel:
         self.epic = epic if epic else 'None'
 
     @property
-    def epic_id(self):
+    def epic_key(self):
         try:
-            return re.findall(r'\((\d+)\)', self.epic)[0]
+            return re.findall(r'\(([\w-]+)\)', self.epic)[0]
         except:
             return None
 
