@@ -32,7 +32,7 @@ ISSUE_TYPES = (
 )
 
 
-def read_config(config_path='~/.jira_config.ini'):
+def read_config(config_path='~/.jira/config.ini'):
     cfg = configparser.ConfigParser()
     cfg.read(os.path.expanduser(config_path))
     return Config(

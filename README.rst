@@ -30,11 +30,9 @@ A set of scripts for managing Jira using jira-python
 Todo
 --------
 
-* make deafault statuses in jiraconfig
+* make default statuses in jiraconfig
 * add comments to ticket
 * add ability to specify custom field for epics
-* use epic's issue key in epic dump field
-* use epic's issue key in to add epic to issue
 * make json file for reading in transitions
 
 
