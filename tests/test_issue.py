@@ -108,8 +108,7 @@ project: Death-Star
 issue_id: Death-Star-1610
 issue_type: Task
 
-summary: |
-    Your lack of faith
+summary: Your lack of faith
 
 assignee: Motti
 
@@ -152,8 +151,7 @@ project: Death-Star
 issue_id: Death-Star-1610
 issue_type: Task
 
-summary: |
-    Your lack of faith
+summary: Your lack of faith
 
 assignee: Motti
 
@@ -183,8 +181,7 @@ project: Death-Star
 issue_id: None
 issue_type: Task
 
-summary: |
-    pending...
+summary: pending...
 
 assignee: Vader
 

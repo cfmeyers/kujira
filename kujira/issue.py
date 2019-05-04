@@ -51,8 +51,7 @@ project: {self.project}
 issue_id: { self.issue_id }
 issue_type: { self.issue_type }
 
-summary: |
-    {self.summary}
+summary: {self.summary}
 
 assignee: { self.assignee }
 
