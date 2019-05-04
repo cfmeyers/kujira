@@ -16,6 +16,7 @@ from kujira.kujira import (
     get_printable_issue_brief,
     advance_issue,
     get_all_epics,
+    associate_epic_to_issue,
 )
 
 
@@ -96,6 +97,34 @@ def epics_for_project(project_name):
     ids_and_summaries = [(i.fields.summary, i.id) for i in epic_issues]
     for issue in ids_and_summaries:
         click.echo(f'{issue[0]} ({issue[1]})')
+
+
+@main.command()
+@click.argument('issue_id', type=str)
+@click.argument('epic_id', type=str)
+def add_epic_to_issue(issue_id, epic_id):
+    config = read_config()
+    conn = get_conn(config)
+    issue = get_issue_by_id(conn, issue_id)
+    try:
+        epic_issue = get_issue_by_id(conn, epic_id)
+    except Exception as e:
+        click.echo(f'Could not find an epic with the id {epic_id}')
+    try:
+        associate_epic_to_issue(conn, issue, epic_issue)
+        issue = get_issue_by_id(conn, issue_id)
+        confirmed_epic_id = issue.fields.customfield_10910
+        click.echo(f'Added epic {confirmed_epic_id} to {issue_id}')
+    except Exception as e:
+        breakpoint()
+        click.echo(f'Could not add epic {epic_id} to {issue_id}')
+
+
+# all_fields = conn.fields()
+# epic_name_field = [f for f in all_fields if f['name'] == 'Epic Name'][0]
+# epic_name_field
+# {'id': 'customfield_10911', 'key': 'customfield_10911', 'name': 'Epic Name', 'custom': True, 'orderable': True, 'navigable': True, 'searchable': True, 'clauseNames': ['cf[10911]', 'Epic Name'], 'schema': {'type': 'string', 'custom': 'com.pyxis.greenhopper.jira:gh-epic-label', 'customId': 10911}}
+# epic_id = issue.fields.customfield_10910
 
 
 @main.command()

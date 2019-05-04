@@ -115,6 +115,10 @@ def update_current_issue(issue):
         f.write(get_printable_issue_brief(issue) + '\n')
 
 
+def associate_epic_to_issue(conn, issue, epic_issue):
+    return conn.add_issues_to_epic(epic_issue.id, [issue.key])
+
+
 def create_new_issue(conn, config):
     issue_template = make_new_issue_template(config)
     issue = edit(issue_template)
@@ -130,4 +134,8 @@ def create_new_issue(conn, config):
         assignee={'name': issue.assignee},
     )
     update_current_issue(new_issue)
+    try:
+        conn.add_issues_to_epic(epic_issue.id, [new_issue.key])
+    except Exception as exc:
+        breakpoint()
     return new_issue
