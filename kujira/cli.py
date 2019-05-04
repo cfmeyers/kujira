@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 """Console script for kujira."""
-from datetime import datetime, timedelta
-import sys
 import click
 from kujira.kujira import (
     get_open_issues,
@@ -30,9 +28,8 @@ def main(args=None):
 def mine():
     config = read_config()
     conn = get_conn(config)
-    issues = get_open_issues(conn)
-    for issue in issues:
-        click.echo(get_printable_issue(issue))
+    for issue in get_open_issues(conn):
+        click.echo(get_printable_issue_brief(issue))
 
 
 @main.command()
@@ -74,9 +71,10 @@ def advance(issue_id):
     issue = get_issue_by_id(conn, issue_id)
     result = advance_issue(conn, issue)
     if not result:
-        click.echo(f'Failed to transition, issue still {issue.fields.status.name}')
+        msg = f'Failed to transition, issue still {issue.fields.status.name}'
     else:
-        click.echo(f'Transitioned from {issue.fields.status.name} to {result}')
+        msg = f'Transitioned from {issue.fields.status.name} to {result}'
+    click.echo(msg)
 
 
 @main.command()
@@ -93,10 +91,8 @@ def rm(issue_id):
 def epics_for_project(project_name):
     config = read_config()
     conn = get_conn(config)
-    epic_issues = get_all_epics(conn, project_name)
-    ids_and_summaries = [(i.fields.summary, i.id) for i in epic_issues]
-    for issue in ids_and_summaries:
-        click.echo(f'{issue[0]} ({issue[1]})')
+    for e in get_all_epics(conn, project_name):
+        click.echo(f'{e.fields.summary} ({e.id})')
 
 
 @main.command()
@@ -120,13 +116,6 @@ def add_epic_to_issue(issue_id, epic_id):
         click.echo(f'Could not add epic {epic_id} to {issue_id}')
 
 
-# all_fields = conn.fields()
-# epic_name_field = [f for f in all_fields if f['name'] == 'Epic Name'][0]
-# epic_name_field
-# {'id': 'customfield_10911', 'key': 'customfield_10911', 'name': 'Epic Name', 'custom': True, 'orderable': True, 'navigable': True, 'searchable': True, 'clauseNames': ['cf[10911]', 'Epic Name'], 'schema': {'type': 'string', 'custom': 'com.pyxis.greenhopper.jira:gh-epic-label', 'customId': 10911}}
-# epic_id = issue.fields.customfield_10910
-
-
 @main.command()
 def new():
     config = read_config()
@@ -140,8 +129,7 @@ def new():
 def ls(status):
     config = read_config()
     conn = get_conn(config)
-    issues = get_issues_for_status(conn, status)
-    for issue in issues:
+    for issue in get_issues_for_status(conn, status):
         click.echo(get_printable_issue_brief(issue))
 
 

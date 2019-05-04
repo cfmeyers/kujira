@@ -53,19 +53,30 @@ def get_conn(config):
     return JIRA(options, basic_auth=(config.user, config.api_key))
 
 
+def get_issues(conn, query):
+    maxResults = 50
+    startAt = 0
+    issues = conn.search_issues(query, startAt=startAt, maxResults=maxResults)
+    while len(issues) > 0:
+        for issue in issues:
+            yield issue
+        startAt += maxResults
+        issues = conn.search_issues(query, startAt=startAt, maxResults=maxResults)
+
+
 def get_open_issues(conn):
-    return conn.search_issues(
-        'resolution = unresolved and assignee=currentuser() ORDER BY created'
+    yield from get_issues(
+        conn, 'resolution = unresolved and assignee=currentuser() ORDER BY created'
     )
 
 
 def get_all_epics(conn, project_name='Infralytics'):
-    return conn.search_issues(f'issuetype="Epic" AND project="{project_name}"')
+    yield from get_issues(conn, f'issuetype="Epic" AND project="{project_name}"')
 
 
 def get_issues_for_status(conn, status):
     query = f'assignee=currentuser() and status="{status}" ORDER BY created'
-    return conn.search_issues(query)
+    yield from get_issues(conn, query)
 
 
 def get_issue_by_id(conn, id):
