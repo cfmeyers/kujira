@@ -46,6 +46,7 @@ def read_config(config_path='~/.jira/config.ini'):
     )
 
 
+# users = conn.search_users('%', startAt=100)
 def get_conn(config):
     config = read_config()
     options = {'server': config.server_url}
