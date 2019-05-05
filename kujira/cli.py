@@ -6,7 +6,7 @@ from kujira.kujira import (
     get_open_issues,
     get_conn,
     get_printable_issue,
-    get_issue_by_id,
+    get_issue_by_key,
     transition_issue,
     read_config,
     create_new_issue,
@@ -33,11 +33,11 @@ def mine():
 
 
 @main.command()
-@click.argument('issue_id', type=str)
-def fix_issue(issue_id):
+@click.argument('issue_key', type=str)
+def fix_issue(issue_key):
     config = read_config()
     conn = get_conn(config)
-    issue = get_issue_by_id(conn, issue_id)
+    issue = get_issue_by_key(conn, issue_key)
     transition_issue(conn, issue, 'Reopen Issue')
     transition_issue(conn, issue, 'Start Progress')
     transition_issue(conn, issue, 'Pull Request')
@@ -46,29 +46,29 @@ def fix_issue(issue_id):
 
 
 @main.command()
-@click.argument('issue_id', type=str)
-def get_issue(issue_id):
+@click.argument('issue_key', type=str)
+def get_issue(issue_key):
     config = read_config()
     conn = get_conn(config)
-    issue = get_issue_by_id(conn, issue_id)
+    issue = get_issue_by_key(conn, issue_key)
     print(get_printable_issue(issue))
 
 
 @main.command()
-@click.argument('issue_id', type=str)
-def inspect(issue_id):
+@click.argument('issue_key', type=str)
+def inspect(issue_key):
     config = read_config()
     conn = get_conn(config)
-    issue = get_issue_by_id(conn, issue_id)
+    issue = get_issue_by_key(conn, issue_key)
     breakpoint()
 
 
 @main.command()
-@click.argument('issue_id', type=str)
-def advance(issue_id):
+@click.argument('issue_key', type=str)
+def advance(issue_key):
     config = read_config()
     conn = get_conn(config)
-    issue = get_issue_by_id(conn, issue_id)
+    issue = get_issue_by_key(conn, issue_key)
     result = advance_issue(conn, issue)
     if not result:
         msg = f'Failed to transition, issue still {issue.fields.status.name}'
@@ -78,11 +78,11 @@ def advance(issue_id):
 
 
 @main.command()
-@click.argument('issue_id', type=str)
-def rm(issue_id):
+@click.argument('issue_key', type=str)
+def rm(issue_key):
     config = read_config()
     conn = get_conn(config)
-    issue = get_issue_by_id(conn, issue_id)
+    issue = get_issue_by_key(conn, issue_key)
     issue.delete()
 
 
@@ -96,24 +96,24 @@ def epics_for_project(project_name):
 
 
 @main.command()
-@click.argument('issue_id', type=str)
+@click.argument('issue_key', type=str)
 @click.argument('epic_key', type=str)
-def add_epic_to_issue(issue_id, epic_key):
+def add_epic_to_issue(issue_key, epic_key):
     config = read_config()
     conn = get_conn(config)
-    issue = get_issue_by_id(conn, issue_id)
+    issue = get_issue_by_key(conn, issue_key)
     try:
-        epic_issue = get_issue_by_id(conn, epic_key)
+        epic_issue = get_issue_by_key(conn, epic_key)
     except Exception as e:
-        click.echo(f'Could not find an epic with the id {epic_key}')
+        click.echo(f'Could not find an epic with the key {epic_key}')
     try:
         associate_epic_to_issue(conn, issue, epic_issue)
-        issue = get_issue_by_id(conn, issue_id)
+        issue = get_issue_by_key(conn, issue_key)
         confirmed_epic_key = issue.fields.customfield_10910
-        click.echo(f'Added epic {confirmed_epic_key} to {issue_id}')
+        click.echo(f'Added epic {confirmed_epic_key} to {issue_key}')
     except Exception as e:
         breakpoint()
-        click.echo(f'Could not add epic {epic_key} to {issue_id}')
+        click.echo(f'Could not add epic {epic_key} to {issue_key}')
 
 
 @main.command()

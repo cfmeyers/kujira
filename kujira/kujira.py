@@ -79,7 +79,7 @@ def get_issues_for_status(conn, status):
     yield from get_issues(conn, query)
 
 
-def get_issue_by_id(conn, id):
+def get_issue_by_key(conn, id):
     return conn.issue(id)
 
 
