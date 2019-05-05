@@ -2,6 +2,7 @@
 
 """Console script for kujira."""
 import click
+
 from kujira.kujira import (
     get_open_issues,
     get_conn,
@@ -15,7 +16,9 @@ from kujira.kujira import (
     advance_issue,
     get_all_epics,
     associate_epic_to_issue,
+    get_users,
 )
+from kujira.models.user import UserModel
 
 
 @click.group()
@@ -93,6 +96,14 @@ def epics_for_project(project_name):
     conn = get_conn(config)
     for e in get_all_epics(conn, project_name):
         click.echo(f'{e.fields.summary} ({e.key})')
+
+
+@main.command()
+def get_all_users():
+    config = read_config()
+    conn = get_conn(config)
+    for user in get_users(conn):
+        click.echo(UserModel.from_API(user))
 
 
 @main.command()

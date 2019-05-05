@@ -46,7 +46,6 @@ def read_config(config_path='~/.jira/config.ini'):
     )
 
 
-# users = conn.search_users('%', startAt=100)
 def get_conn(config):
     config = read_config()
     options = {'server': config.server_url}
@@ -63,6 +62,17 @@ def get_issues(conn, query):
             yield issue
         startAt += maxResults
         issues = conn.search_issues(query, startAt=startAt, maxResults=maxResults)
+
+
+def get_users(conn, query='%'):
+    maxResults = 1000
+    startAt = 0
+    users = conn.search_users(query, startAt=startAt, maxResults=maxResults)
+    while len(users) > 0:
+        for user in users:
+            yield user
+        startAt += maxResults
+        users = conn.search_users(query, startAt=startAt, maxResults=maxResults)
 
 
 def get_open_issues(conn):
