@@ -91,7 +91,7 @@ def deserialize_issue_from_file(path_to_issue):
     return issue
 
 
-def deserialize_issue_from_API(jira_issue):
+def deserialize_issue_from_API(jira_issue, epic_tag):
     return IssueModel(
         issue_id=jira_issue.key,
         project=jira_issue.fields.project.key,
@@ -101,6 +101,7 @@ def deserialize_issue_from_API(jira_issue):
         description=jira_issue.fields.description,
         priority=jira_issue.fields.priority.name,
         issue_type=jira_issue.fields.issuetype.name,
+        epic=epic_tag,
     )
 
 

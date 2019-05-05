@@ -111,13 +111,24 @@ def transition_issue(conn, issue, transition_name):
     return False
 
 
-def get_printable_issue(issue):
-    issue_model = deserialize_issue_from_API(issue)
+# issue.fields.comment.comments[0].body
+def get_epic_tag(epic_issue):
+    return f'{epic_issue.fields.summary} ({epic_issue.key})'
+
+
+def get_printable_issue(issue, conn):
+    try:
+        epic_key = issue.fields.customfield_10910
+        epic_issue = get_issue_by_key(conn, epic_key)
+        epic_tag = get_epic_tag(epic_issue)
+    except:
+        epic_issue = None
+    issue_model = deserialize_issue_from_API(issue, epic_tag)
     return issue_model
 
 
 def get_printable_issue_brief(issue):
-    issue_model = deserialize_issue_from_API(issue)
+    issue_model = deserialize_issue_from_API(issue, None)
     return f'{issue_model.issue_id} | {issue_model.summary}'
 
 

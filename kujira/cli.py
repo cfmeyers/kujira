@@ -51,7 +51,7 @@ def get_issue(issue_key):
     config = read_config()
     conn = get_conn(config)
     issue = get_issue_by_key(conn, issue_key)
-    print(get_printable_issue(issue))
+    print(get_printable_issue(issue, conn))
 
 
 @main.command()
