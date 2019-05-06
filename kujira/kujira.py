@@ -8,8 +8,8 @@ import os
 from jira import JIRA
 
 from kujira.models.issue import (
-    deserialize_issue_from_API,
     make_new_issue_template,
+    IssueModel,
     deserialize_issue_from_file,
 )
 from kujira.edit import edit
@@ -134,12 +134,12 @@ def get_printable_issue(issue, conn):
         epic_tag = get_epic_tag(epic_issue)
     except:
         epic_issue = None
-    issue_model = deserialize_issue_from_API(issue, epic_tag)
+    issue_model = IssueModel.from_api(issue, epic_tag)
     return issue_model
 
 
 def get_printable_issue_brief(issue):
-    issue_model = deserialize_issue_from_API(issue, None)
+    issue_model = IssueModel.from_api(issue, None)
     updated = issue_model.updated_at.date()
     return f'{issue_model.issue_id} | {issue_model.summary} ({updated})'
 

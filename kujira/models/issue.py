@@ -29,6 +29,21 @@ class IssueModel:
         self.issue_id = issue_id
         self.epic = epic if epic else 'None'
 
+    @classmethod
+    def from_api(cls, api_issue, epic_tag):
+        return cls(
+            issue_id=api_issue.key,
+            project=api_issue.fields.project.key,
+            assignee=api_issue.fields.assignee.key,
+            reporter=api_issue.fields.reporter.key,
+            summary=api_issue.fields.summary,
+            description=api_issue.fields.description,
+            priority=api_issue.fields.priority.name,
+            issue_type=api_issue.fields.issuetype.name,
+            epic=epic_tag,
+            updated_at=dateutil.parser.parse(api_issue.fields.updated),
+        )
+
     @property
     def epic_key(self):
         try:
@@ -96,21 +111,6 @@ def deserialize_issue_from_file(path_to_issue):
             updated_at=data.get('updated_at'),
         )
     return issue
-
-
-def deserialize_issue_from_API(jira_issue, epic_tag):
-    return IssueModel(
-        issue_id=jira_issue.key,
-        project=jira_issue.fields.project.key,
-        assignee=jira_issue.fields.assignee.key,
-        reporter=jira_issue.fields.reporter.key,
-        summary=jira_issue.fields.summary,
-        description=jira_issue.fields.description,
-        priority=jira_issue.fields.priority.name,
-        issue_type=jira_issue.fields.issuetype.name,
-        epic=epic_tag,
-        updated_at=dateutil.parser.parse(jira_issue.fields.updated),
-    )
 
 
 def serialize(issue):

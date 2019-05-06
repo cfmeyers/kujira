@@ -7,7 +7,6 @@ from kujira.models.issue import (
     IssueModel,
     deserialize_issue_from_file,
     serialize,
-    deserialize_issue_from_API,
     make_new_issue_template,
 )
 
@@ -132,14 +131,6 @@ description: |
 """
         assert expected == str(vader_issue)
 
-
-class TestDeserializeIssueFromFile:
-    def test_it_reads_yaml_file_and_returns_issue_model(self, vader_issue):
-        issue = deserialize_issue_from_file(PATH_TO_VADER_FILE)
-        assert issue == vader_issue
-
-
-class TestDeserializeIssueFromAPI:
     def test_it_reads_API_object_and_returns_issue_model(self, vader_issue):
         mock_api_issue = MagicMock(key='Death-Star-1610')
         mock_api_issue.fields.project.key = 'Death-Star'
@@ -150,7 +141,13 @@ class TestDeserializeIssueFromAPI:
         mock_api_issue.fields.priority.name = '3'
         mock_api_issue.fields.issuetype.name = 'Task'
         mock_api_issue.fields.updated = '2019-05-29'
-        issue = deserialize_issue_from_API(mock_api_issue, None)
+        issue = IssueModel.from_api(mock_api_issue, None)
+        assert issue == vader_issue
+
+
+class TestDeserializeIssueFromFile:
+    def test_it_reads_yaml_file_and_returns_issue_model(self, vader_issue):
+        issue = deserialize_issue_from_file(PATH_TO_VADER_FILE)
         assert issue == vader_issue
 
 
