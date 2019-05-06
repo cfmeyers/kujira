@@ -42,7 +42,7 @@ Todo
 * add link to issue to IssueModel
 * add ability to search for arbitrary tickets
 * move current_issue functionality from python to shell script
-* add ability to make a ticket for someone else
+* save url in issue
 
 
 
