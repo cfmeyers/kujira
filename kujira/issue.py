@@ -1,5 +1,7 @@
-import yaml
 import re
+
+import dateutil.parser
+import yaml
 
 
 class IssueModel:
@@ -12,6 +14,7 @@ class IssueModel:
         summary,
         description,
         priority,
+        updated_at,
         epic=None,
         issue_id=None,
     ):
@@ -22,6 +25,7 @@ class IssueModel:
         self.summary = summary
         self.description = description
         self.priority = priority
+        self.updated_at = updated_at
         self.issue_id = issue_id
         self.epic = epic if epic else 'None'
 
@@ -41,6 +45,7 @@ class IssueModel:
             and (self.summary == other.summary)
             and (self.description == other.description)
             and (self.priority == other.priority)
+            and (self.updated_at == other.updated_at)
             and (self.issue_id == other.issue_id)
             and (self.epic == other.epic)
         )
@@ -50,6 +55,7 @@ class IssueModel:
 project: {self.project}
 issue_id: { self.issue_id }
 issue_type: { self.issue_type }
+updated_at: { self.updated_at }
 
 summary: {self.summary}
 
@@ -87,6 +93,7 @@ def deserialize_issue_from_file(path_to_issue):
             issue_id=process_string(data.get('issue_id')),
             issue_type=process_string(data.get('issue_type')),
             epic=process_string(data.get('epic')),
+            updated_at=data.get('updated_at'),
         )
     return issue
 
@@ -102,6 +109,7 @@ def deserialize_issue_from_API(jira_issue, epic_tag):
         priority=jira_issue.fields.priority.name,
         issue_type=jira_issue.fields.issuetype.name,
         epic=epic_tag,
+        updated_at=dateutil.parser.parse(jira_issue.fields.updated),
     )
 
 
@@ -120,5 +128,6 @@ def make_new_issue_template(config):
         issue_id=process_string('None'),
         issue_type=process_string(config.default_issue_type),
         epic=process_string('None'),
+        updated_at=process_string('None'),
     )
     return str(issue)

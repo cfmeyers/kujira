@@ -140,7 +140,8 @@ def get_printable_issue(issue, conn):
 
 def get_printable_issue_brief(issue):
     issue_model = deserialize_issue_from_API(issue, None)
-    return f'{issue_model.issue_id} | {issue_model.summary}'
+    updated = issue_model.updated_at.date()
+    return f'{issue_model.issue_id} | {issue_model.summary} ({updated})'
 
 
 def update_current_issue(issue):

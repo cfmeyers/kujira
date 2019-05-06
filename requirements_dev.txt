@@ -13,3 +13,4 @@ pytest-runner==4.2
 pyyaml
 jira
 click
+python-dateutil

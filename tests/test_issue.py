@@ -1,4 +1,5 @@
 from unittest.mock import MagicMock
+from datetime import datetime
 
 from pytest import fixture
 
@@ -24,6 +25,7 @@ def vader_issue():
         description='I find your lack of faith disturbing.',
         priority='3',
         issue_id='Death-Star-1610',
+        updated_at=datetime(2019, 5, 29),
     )
 
 
@@ -38,6 +40,7 @@ class TestIssue:
             description='I find your lack of faith disturbing.',
             priority='3',
             epic='Customer Experience (DS-100)',
+            updated_at=datetime(2019, 5, 29),
         )
         assert issue.project == 'Death-Star'
         assert issue.assignee == 'Motti'
@@ -49,6 +52,7 @@ class TestIssue:
         assert issue.issue_id is None
         assert issue.epic == 'Customer Experience (DS-100)'
         assert issue.epic_key == 'DS-100'
+        assert issue.updated_at == datetime(2019, 5, 29)
 
     def test_two_issues_are_equal_if_their_attributes_are_equal(self):
         first_issue = IssueModel(
@@ -59,6 +63,7 @@ class TestIssue:
             summary='Your lack of faith',
             description='I find your lack of faith disturbing.',
             priority='3',
+            updated_at=datetime(2019, 5, 29),
         )
 
         second_issue = IssueModel(
@@ -69,6 +74,7 @@ class TestIssue:
             summary='Your lack of faith',
             description='I find your lack of faith disturbing.',
             priority='3',
+            updated_at=datetime(2019, 5, 29),
         )
 
         assert first_issue == second_issue
@@ -88,6 +94,7 @@ class TestIssue:
             summary='Your lack of faith',
             description='I find your lack of faith disturbing.',
             priority='3',
+            updated_at=datetime(2019, 5, 29),
         )
 
         second_issue = IssueModel(
@@ -98,6 +105,7 @@ class TestIssue:
             summary=first_issue.summary,
             description=first_issue.description,
             priority=first_issue.priority,
+            updated_at=datetime(2019, 5, 29),
         )
 
         assert first_issue != second_issue
@@ -107,6 +115,7 @@ class TestIssue:
 project: Death-Star
 issue_id: Death-Star-1610
 issue_type: Task
+updated_at: 2019-05-29 00:00:00
 
 summary: Your lack of faith
 
@@ -140,6 +149,7 @@ class TestDeserializeIssueFromAPI:
         mock_api_issue.fields.description = 'I find your lack of faith disturbing.'
         mock_api_issue.fields.priority.name = '3'
         mock_api_issue.fields.issuetype.name = 'Task'
+        mock_api_issue.fields.updated = '2019-05-29'
         issue = deserialize_issue_from_API(mock_api_issue, None)
         assert issue == vader_issue
 
@@ -150,6 +160,7 @@ class TestSerializeIssue:
 project: Death-Star
 issue_id: Death-Star-1610
 issue_type: Task
+updated_at: 2019-05-29 00:00:00
 
 summary: Your lack of faith
 
@@ -180,6 +191,7 @@ class TestMakeNewIssueTemplate:
 project: Death-Star
 issue_id: None
 issue_type: Task
+updated_at: None
 
 summary: pending...
 
