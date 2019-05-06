@@ -7,7 +7,7 @@ import os
 
 from jira import JIRA
 
-from kujira.issue import (
+from kujira.models.issue import (
     deserialize_issue_from_API,
     make_new_issue_template,
     deserialize_issue_from_file,
@@ -153,6 +153,8 @@ def associate_epic_to_issue(conn, issue, epic_issue):
     return conn.add_issues_to_epic(epic_issue.id, [issue.key])
 
 
+# [~accountid:557058:e3520510-e28a-421b-8f92-10f7211b6947] check
+# new_issue.permalink()
 def create_new_issue(conn, config):
     issue_template = make_new_issue_template(config)
     issue = edit(issue_template)
@@ -172,5 +174,5 @@ def create_new_issue(conn, config):
         epic_issue = get_issue_by_key(conn, issue.epic_key)
         val = associate_epic_to_issue(conn, new_issue, epic_issue)
     except Exception as exc:
-        breakpoint()
+        pass
     return new_issue

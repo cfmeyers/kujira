@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pytest import fixture
 
-from kujira.issue import (
+from kujira.models.issue import (
     IssueModel,
     deserialize_issue_from_file,
     serialize,

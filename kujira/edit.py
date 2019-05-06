@@ -5,7 +5,7 @@ import os
 import subprocess
 from tempfile import NamedTemporaryFile
 
-from kujira.issue import deserialize_issue_from_file
+from kujira.models.issue import deserialize_issue_from_file
 
 
 def get_editor():
