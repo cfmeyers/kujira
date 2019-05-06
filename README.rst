@@ -39,6 +39,10 @@ Todo
 * move serialize-from-string function to IssueModel class method
 * add initial test for cli
 * add date last updated to issue model
+* add link to issue to IssueModel
+* add ability to search for arbitrary tickets
+* move current_issue functionality from python to shell script
+* add ability to make a ticket for someone else
 
 
 

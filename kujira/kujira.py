@@ -169,7 +169,8 @@ def create_new_issue(conn, config):
     )
     update_current_issue(new_issue)
     try:
-        conn.add_issues_to_epic(epic_issue.id, [new_issue.key])
+        epic_issue = get_issue_by_key(conn, issue.epic_key)
+        val = associate_epic_to_issue(conn, new_issue, epic_issue)
     except Exception as exc:
         breakpoint()
     return new_issue
