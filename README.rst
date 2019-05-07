@@ -30,13 +30,11 @@ A set of scripts for managing Jira using jira-python
 Todo
 --------
 
-* make default statuses in jiraconfig
+* add ability to edit issue
 * add comments to ticket
 * add ability to specify custom field for epics
 * make json file for reading in transitions
 * add initial test for cli
-* add date last updated to issue model
-* add link to issue to IssueModel
 * add ability to search for arbitrary tickets
 * move current_issue functionality from python to shell script
 * save url in issue

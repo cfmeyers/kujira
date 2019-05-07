@@ -17,6 +17,7 @@ class IssueModel:
         updated_at,
         epic=None,
         issue_id=None,
+        url=None,
     ):
         self.project = project
         self.issue_type = issue_type
@@ -28,6 +29,7 @@ class IssueModel:
         self.updated_at = updated_at
         self.issue_id = issue_id
         self.epic = epic if epic else 'None'
+        self.url = url
 
     @classmethod
     def from_api(cls, api_issue, epic_tag):
@@ -42,6 +44,7 @@ class IssueModel:
             issue_type=api_issue.fields.issuetype.name,
             epic=epic_tag,
             updated_at=dateutil.parser.parse(api_issue.fields.updated),
+            url=api_issue.permalink(),
         )
 
     @classmethod
@@ -59,6 +62,7 @@ class IssueModel:
                 issue_type=process_string(data.get('issue_type')),
                 epic=process_string(data.get('epic')),
                 updated_at=data.get('updated_at'),
+                url=data.get('url'),
             )
 
     @property
@@ -80,6 +84,7 @@ class IssueModel:
             and (self.updated_at == other.updated_at)
             and (self.issue_id == other.issue_id)
             and (self.epic == other.epic)
+            and (self.url == other.url)
         )
 
     def __str__(self):
@@ -88,6 +93,7 @@ project: {self.project}
 issue_id: { self.issue_id }
 issue_type: { self.issue_type }
 updated_at: { self.updated_at }
+url: { self.url }
 
 summary: {self.summary}
 

@@ -20,6 +20,7 @@ def vader_issue():
         priority='3',
         issue_id='Death-Star-1610',
         updated_at=datetime(2019, 5, 29),
+        url='empire.jira.com/browse/Death-Star-1610',
     )
 
 
@@ -47,6 +48,7 @@ class TestIssue:
         assert issue.epic == 'Customer Experience (DS-100)'
         assert issue.epic_key == 'DS-100'
         assert issue.updated_at == datetime(2019, 5, 29)
+        assert issue.url is None
 
     def test_two_issues_are_equal_if_their_attributes_are_equal(self):
         first_issue = IssueModel(
@@ -110,6 +112,7 @@ project: Death-Star
 issue_id: Death-Star-1610
 issue_type: Task
 updated_at: 2019-05-29 00:00:00
+url: empire.jira.com/browse/Death-Star-1610
 
 summary: Your lack of faith
 
@@ -136,6 +139,7 @@ description: |
         mock_api_issue.fields.priority.name = '3'
         mock_api_issue.fields.issuetype.name = 'Task'
         mock_api_issue.fields.updated = '2019-05-29'
+        mock_api_issue.permalink.return_value = 'empire.jira.com/browse/Death-Star-1610'
         issue = IssueModel.from_api(mock_api_issue, None)
         assert issue == vader_issue
 
@@ -151,6 +155,7 @@ project: Death-Star
 issue_id: Death-Star-1610
 issue_type: Task
 updated_at: 2019-05-29 00:00:00
+url: empire.jira.com/browse/Death-Star-1610
 
 summary: Your lack of faith
 
@@ -182,6 +187,7 @@ project: Death-Star
 issue_id: None
 issue_type: Task
 updated_at: None
+url: None
 
 summary: pending...
 
