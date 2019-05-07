@@ -17,6 +17,7 @@ from kujira.kujira import (
     get_all_epics,
     associate_epic_to_issue,
     get_users,
+    edit_issue,
 )
 from kujira.models.user import UserModel
 
@@ -64,6 +65,14 @@ def inspect(issue_key):
     conn = get_conn(config)
     issue = get_issue_by_key(conn, issue_key)
     breakpoint()
+
+
+@main.command()
+@click.argument('issue_key', type=str)
+def edit(issue_key):
+    config = read_config()
+    conn = get_conn(config)
+    edit_issue(conn, issue_key)
 
 
 @main.command()

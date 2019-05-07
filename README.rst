@@ -37,7 +37,6 @@ Todo
 * add initial test for cli
 * add ability to search for arbitrary tickets
 * move current_issue functionality from python to shell script
-* save url in issue
 
 
 

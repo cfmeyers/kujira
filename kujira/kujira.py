@@ -149,8 +149,15 @@ def associate_epic_to_issue(conn, issue, epic_issue):
     return conn.add_issues_to_epic(epic_issue.id, [issue.key])
 
 
+def edit_issue(conn, issue_key):
+    api_issue = get_issue_by_key(conn, issue_key)
+    issue = IssueModel.from_api(api_issue, None)
+    edited_issue = edit(str(issue))
+    # api_issue.update()
+    # breakpoint()
+
+
 # [~accountid:557058:e3520510-e28a-421b-8f92-10f7211b6947] check
-# new_issue.permalink()
 def create_new_issue(conn, config):
     issue_template = make_new_issue_template(config)
     issue = edit(issue_template)
