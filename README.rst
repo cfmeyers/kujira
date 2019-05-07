@@ -34,7 +34,6 @@ Todo
 * add comments to ticket
 * add ability to specify custom field for epics
 * make json file for reading in transitions
-* move serialize-from-string function to IssueModel class method
 * add initial test for cli
 * add date last updated to issue model
 * add link to issue to IssueModel

@@ -44,6 +44,23 @@ class IssueModel:
             updated_at=dateutil.parser.parse(api_issue.fields.updated),
         )
 
+    @classmethod
+    def from_file(cls, path_to_issue):
+        with open(path_to_issue, 'r') as f:
+            data = yaml.safe_load(f)
+            return cls(
+                project=process_string(data['project']),
+                assignee=process_string(data['assignee']),
+                reporter=process_string(data['reporter']),
+                summary=process_string(data['summary']),
+                description=process_string(data['description']),
+                priority=process_string(str(data['priority'])),
+                issue_id=process_string(data.get('issue_id')),
+                issue_type=process_string(data.get('issue_type')),
+                epic=process_string(data.get('epic')),
+                updated_at=data.get('updated_at'),
+            )
+
     @property
     def epic_key(self):
         try:
@@ -93,24 +110,6 @@ IssueModel(project='{self.project}', issue_type='{self.issue_type}', assignee='{
 
 def process_string(item):
     return item.strip('\n').strip()
-
-
-def deserialize_issue_from_file(path_to_issue):
-    with open(path_to_issue, 'r') as f:
-        data = yaml.safe_load(f)
-        issue = IssueModel(
-            project=process_string(data['project']),
-            assignee=process_string(data['assignee']),
-            reporter=process_string(data['reporter']),
-            summary=process_string(data['summary']),
-            description=process_string(data['description']),
-            priority=process_string(str(data['priority'])),
-            issue_id=process_string(data.get('issue_id')),
-            issue_type=process_string(data.get('issue_type')),
-            epic=process_string(data.get('epic')),
-            updated_at=data.get('updated_at'),
-        )
-    return issue
 
 
 def serialize(issue):

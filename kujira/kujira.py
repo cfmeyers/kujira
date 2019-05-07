@@ -7,11 +7,7 @@ import os
 
 from jira import JIRA
 
-from kujira.models.issue import (
-    make_new_issue_template,
-    IssueModel,
-    deserialize_issue_from_file,
-)
+from kujira.models.issue import make_new_issue_template, IssueModel
 from kujira.edit import edit
 
 Config = namedtuple(

@@ -3,12 +3,7 @@ from datetime import datetime
 
 from pytest import fixture
 
-from kujira.models.issue import (
-    IssueModel,
-    deserialize_issue_from_file,
-    serialize,
-    make_new_issue_template,
-)
+from kujira.models.issue import IssueModel, serialize, make_new_issue_template
 
 PATH_TO_VADER_FILE = 'tests/fixtures/darth_vader.jira_issue.yml'
 
@@ -144,10 +139,8 @@ description: |
         issue = IssueModel.from_api(mock_api_issue, None)
         assert issue == vader_issue
 
-
-class TestDeserializeIssueFromFile:
     def test_it_reads_yaml_file_and_returns_issue_model(self, vader_issue):
-        issue = deserialize_issue_from_file(PATH_TO_VADER_FILE)
+        issue = IssueModel.from_file(PATH_TO_VADER_FILE)
         assert issue == vader_issue
 
 

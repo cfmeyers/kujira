@@ -5,7 +5,7 @@ import os
 import subprocess
 from tempfile import NamedTemporaryFile
 
-from kujira.models.issue import deserialize_issue_from_file
+from kujira.models.issue import IssueModel
 
 
 def get_editor():
@@ -27,4 +27,4 @@ def edit(template):
 
     proc = subprocess.Popen(args, close_fds=True, stdout=None)
     proc.communicate()
-    return deserialize_issue_from_file(temp_file.name)
+    return IssueModel.from_file(temp_file.name)
