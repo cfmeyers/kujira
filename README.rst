@@ -30,13 +30,19 @@ A set of scripts for managing Jira using jira-python
 Todo
 --------
 
-* add ability to edit issue
+* add ability to edit issue:
+  * priority
+  * assignee
+  * issuetype
+  * project
+* add ability to view issue in your editor (read-only)
 * add comments to ticket
 * add ability to specify custom field for epics
 * make json file for reading in transitions
 * add initial test for cli
 * add ability to search for arbitrary tickets
 * move current_issue functionality from python to shell script
+* make user-friendly "create .jira/config" dialog
 
 
 

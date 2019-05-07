@@ -3,7 +3,12 @@ from datetime import datetime
 
 from pytest import fixture
 
-from kujira.models.issue import IssueModel, serialize, make_new_issue_template
+from kujira.models.issue import (
+    IssueModel,
+    serialize,
+    make_new_issue_template,
+    get_updates,
+)
 
 PATH_TO_VADER_FILE = 'tests/fixtures/darth_vader.jira_issue.yml'
 
@@ -203,3 +208,95 @@ description: |
     pending...
 """
         assert expected == make_new_issue_template(config)
+
+
+class TestGetUpdates:
+    def test_it_returns_the_diff(self, vader_issue):
+        initial = IssueModel(
+            project='Death-Star',
+            issue_type='Task',
+            assignee='Motti',
+            reporter='Vader',
+            summary='Your lack of faith',
+            description='I find your lack of faith disturbing.',
+            priority='3',
+            issue_id='Death-Star-1610',
+            updated_at=datetime(2019, 5, 29),
+            url='empire.jira.com/browse/Death-Star-1610',
+        )
+
+        edited = IssueModel(
+            project='Death-Star',
+            issue_type='Incident',
+            assignee='Veers',
+            reporter='Palpatine',
+            summary='Your lack of faith',
+            description='I find your lack of faith really disturbing.',
+            priority='4',
+            issue_id='Death-Star-1610',
+            updated_at=datetime(2019, 5, 29),
+            url='empire.jira.com/browse/Death-Star-1610',
+        )
+        expected = {
+            'description': 'I find your lack of faith really disturbing.',
+            # 'priority': '4',
+            # 'assignee': 'Veers',
+            # 'issuetype': 'Incident',
+        }
+        assert expected == get_updates(initial, edited)
+
+    def test_it_returns_no_diff_if_issue_is_unchanged(self, vader_issue):
+        initial = IssueModel(
+            project='Death-Star',
+            issue_type='Task',
+            assignee='Motti',
+            reporter='Vader',
+            summary='Your lack of faith',
+            description='I find your lack of faith disturbing.',
+            priority='3',
+            issue_id='Death-Star-1610',
+            updated_at=datetime(2019, 5, 29),
+            url='empire.jira.com/browse/Death-Star-1610',
+        )
+
+        edited = IssueModel(
+            project='Death-Star',
+            issue_type='Task',
+            assignee='Motti',
+            reporter='Vader',
+            summary='Your lack of faith',
+            description='I find your lack of faith disturbing.',
+            priority='3',
+            issue_id='Death-Star-1610',
+            updated_at=datetime(2019, 5, 29),
+            url='empire.jira.com/browse/Death-Star-1610',
+        )
+        assert {} == get_updates(initial, edited)
+
+    def test_it_returns_no_diff_for_immutable_fields(self, vader_issue):
+        initial = IssueModel(
+            project='Death-Star',
+            issue_type='Task',
+            assignee='Motti',
+            reporter='Vader',
+            summary='Your lack of faith',
+            description='I find your lack of faith disturbing.',
+            priority='3',
+            issue_id='Death-Star-1610',
+            updated_at=datetime(2019, 5, 29),
+            url='empire.jira.com/browse/Death-Star-1610',
+        )
+
+        edited = IssueModel(
+            project='Death-Star',
+            issue_type='Task',
+            assignee='Motti',
+            reporter='Vader',
+            summary='Your lack of faith',
+            description='I find your lack of faith disturbing.',
+            priority='3',
+            issue_id='EWOKS-1610',
+            updated_at=datetime(2019, 7, 29),
+            url='ewoksrock.com',
+        )
+        assert {} == get_updates(initial, edited)

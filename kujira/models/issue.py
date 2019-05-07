@@ -136,3 +136,18 @@ def make_new_issue_template(config):
         updated_at=process_string('None'),
     )
     return str(issue)
+
+
+def get_updates(initial, edited):
+    updates = {}
+    if initial.description != edited.description:
+        updates['description'] = edited.description
+    # if initial.priority != edited.priority:
+    #     updates['priority'] = edited.priority
+    # if initial.assignee != edited.assignee:
+    #     updates['assignee'] = edited.assignee
+    # if initial.issue_type != edited.issue_type:
+    #     updates['issuetype'] = edited.issue_type
+    # if initial.project != edited.project:
+    #     updates['project'] = edited.project
+    return updates

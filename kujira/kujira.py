@@ -7,7 +7,7 @@ import os
 
 from jira import JIRA
 
-from kujira.models.issue import make_new_issue_template, IssueModel
+from kujira.models.issue import make_new_issue_template, IssueModel, get_updates
 from kujira.edit import edit
 
 Config = namedtuple(
@@ -153,8 +153,8 @@ def edit_issue(conn, issue_key):
     api_issue = get_issue_by_key(conn, issue_key)
     issue = IssueModel.from_api(api_issue, None)
     edited_issue = edit(str(issue))
-    # api_issue.update()
-    # breakpoint()
+    updates = get_updates(issue, edited_issue)
+    api_issue.update(**updates)
 
 
 # [~accountid:557058:e3520510-e28a-421b-8f92-10f7211b6947] check
