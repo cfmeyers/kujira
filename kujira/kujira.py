@@ -92,9 +92,10 @@ def get_issue_by_key(conn, id):
 
 NEXT_ACTION = {
     'Backlog': 'Start Progress',
-    'In Progress': 'Pull Request',
+    'To Do': 'In Progress',
+    'In Progress': 'Code Review',
     'Code Review': 'Ready For Deployment',
-    'Ready For Deployment': 'Deployed',
+    'Ready For Deployment': 'Done',
     'Resolved': 'Deployed',
 }
 
