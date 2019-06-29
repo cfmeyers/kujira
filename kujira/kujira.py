@@ -158,6 +158,12 @@ def edit_issue(conn, issue_key):
     api_issue.update(**updates)
 
 
+def print_issue_fields(issue):
+    for key, value in issue.fields.__dict__.items():
+        if value:
+            print(f'{key}: {value}')
+
+
 # [~accountid:557058:e3520510-e28a-421b-8f92-10f7211b6947] check
 def create_new_issue(conn, config):
     issue_template = make_new_issue_template(config)
