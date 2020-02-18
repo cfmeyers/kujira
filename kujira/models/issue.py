@@ -28,7 +28,7 @@ class IssueModel:
         self.priority = priority
         self.updated_at = updated_at
         self.issue_id = issue_id
-        self.epic = epic if epic else 'None'
+        self.epic = epic if epic else "None"
         self.url = url
 
     @classmethod
@@ -49,26 +49,26 @@ class IssueModel:
 
     @classmethod
     def from_file(cls, path_to_issue):
-        with open(path_to_issue, 'r') as f:
+        with open(path_to_issue, "r") as f:
             data = yaml.safe_load(f)
             return cls(
-                project=process_string(data['project']),
-                assignee=process_string(data['assignee']),
-                reporter=process_string(data['reporter']),
-                summary=process_string(data['summary']),
-                description=process_string(data['description']),
-                priority=process_string(str(data['priority'])),
-                issue_id=process_string(data.get('issue_id')),
-                issue_type=process_string(data.get('issue_type')),
-                epic=process_string(data.get('epic')),
-                updated_at=data.get('updated_at'),
-                url=data.get('url'),
+                project=process_string(data["project"]),
+                assignee=process_string(data["assignee"]),
+                reporter=process_string(data["reporter"]),
+                summary=process_string(data["summary"]),
+                description=process_string(data["description"]),
+                priority=process_string(str(data["priority"])),
+                issue_id=process_string(data.get("issue_id")),
+                issue_type=process_string(data.get("issue_type")),
+                epic=process_string(data.get("epic")),
+                updated_at=data.get("updated_at"),
+                url=data.get("url"),
             )
 
     @property
     def epic_key(self):
         try:
-            return re.findall(r'\(([\w-]+)\)', self.epic)[0]
+            return re.findall(r"\(([\w-]+)\)", self.epic)[0]
         except:
             return None
 
@@ -115,7 +115,7 @@ IssueModel(project='{self.project}', issue_type='{self.issue_type}', assignee='{
 
 
 def process_string(item):
-    return item.strip('\n').strip()
+    return item.strip("\n").strip()
 
 
 def serialize(issue):
@@ -126,14 +126,14 @@ def make_new_issue_template(config):
     issue = IssueModel(
         project=process_string(config.default_project),
         assignee=process_string(config.user_key),
-        reporter='None',
-        summary=process_string('pending...'),
-        description=process_string('pending...'),
+        reporter="None",
+        summary=process_string("pending..."),
+        description=process_string("pending..."),
         priority=process_string(str(config.default_priority)),
-        issue_id=process_string('None'),
+        issue_id=process_string("None"),
         issue_type=process_string(config.default_issue_type),
-        epic=process_string('None'),
-        updated_at=process_string('None'),
+        epic=process_string("None"),
+        updated_at=process_string("None"),
     )
     return str(issue)
 
@@ -141,7 +141,7 @@ def make_new_issue_template(config):
 def get_updates(initial, edited):
     updates = {}
     if initial.description != edited.description:
-        updates['description'] = edited.description
+        updates["description"] = edited.description
     # if initial.priority != edited.priority:
     #     updates['priority'] = edited.priority
     # if initial.assignee != edited.assignee:
