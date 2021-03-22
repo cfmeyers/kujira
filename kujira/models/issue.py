@@ -35,11 +35,11 @@ class IssueModel:
     def from_api(cls, api_issue, epic_tag):
         return cls(
             issue_id=api_issue.key,
-            project=api_issue.fields.project.key,
-            assignee=api_issue.fields.assignee.key,
-            reporter=api_issue.fields.reporter.key,
-            summary=api_issue.fields.summary,
-            description=api_issue.fields.description,
+            project=api_issue.fields.project.id,
+            assignee=api_issue.fields.assignee.accountId,
+            reporter=api_issue.fields.reporter.accountId,
+            summary=api_issue.fields.summary.replace(":", " "),
+            description=api_issue.fields.description.replace(":", " "),
             priority=api_issue.fields.priority.name,
             issue_type=api_issue.fields.issuetype.name,
             epic=epic_tag,
@@ -88,6 +88,7 @@ class IssueModel:
         )
 
     def __str__(self):
+        description = "\n  ".join(self.description.split("\n"))
         return f"""\
 project: {self.project}
 issue_id: { self.issue_id }
@@ -106,7 +107,7 @@ epic: { self.epic }
 priority: { self.priority }
 
 description: |
-    {self.description}
+  {description}
 """
 
     def __repr__(self):

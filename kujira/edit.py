@@ -9,21 +9,21 @@ from kujira.models.issue import IssueModel
 
 
 def get_editor():
-    editor = os.environ.get('VISUAL')
+    editor = os.environ.get("VISUAL")
     if not editor:
-        editor = os.environ.get('EDITOR')
+        editor = os.environ.get("EDITOR")
     if not editor:
-        editor = 'vim'
+        editor = "vim"
     return editor
 
 
 def edit(template):
     editor_name = get_editor()
-    temp_file = NamedTemporaryFile(suffix='.jira_issue.yml')
-    with open(temp_file.name, 'w') as f:
+    temp_file = NamedTemporaryFile(suffix=".jira_issue.yml")
+    with open(temp_file.name, "w") as f:
         f.write(template)
 
-    args = [editor_name, temp_file.name]
+    args = [editor_name, "+7;normal 2wdW", temp_file.name]
 
     proc = subprocess.Popen(args, close_fds=True, stdout=None)
     proc.communicate()

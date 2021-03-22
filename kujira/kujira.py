@@ -131,6 +131,7 @@ def get_printable_issue(issue, conn):
         epic_tag = get_epic_tag(epic_issue)
     except:
         epic_issue = None
+        epic_tag = None
     issue_model = IssueModel.from_api(issue, epic_tag)
     return issue_model
 
@@ -138,7 +139,8 @@ def get_printable_issue(issue, conn):
 def get_printable_issue_brief(issue):
     try:
         issue_model = IssueModel.from_api(issue, None)
-    except:
+    except Exception as e:
+        print(e)
         return f"Did not find info for {issue}"
     updated = issue_model.updated_at.date()
     return f"{issue_model.issue_id} | {issue_model.summary} ({updated})"
@@ -167,6 +169,23 @@ def print_issue_fields(issue):
             print(f"{key}: {value}")
 
 
+def get_current_sprint(conn):
+    board_id = 379
+    sprints = [
+        s
+        for s in conn.sprints(board_id)
+        if s.name
+        not in (
+            "Icebox",
+            "After COVID-19",
+            "Data Eng Groomed Tickets",
+            "Data Eng External Requests",
+        )
+        and "Data" in s.name
+    ]
+    return sprints[-1]
+
+
 # [~accountid:557058:e3520510-e28a-421b-8f92-10f7211b6947] check
 def create_new_issue(conn, config):
     issue_template = make_new_issue_template(config)
@@ -175,12 +194,16 @@ def create_new_issue(conn, config):
         print("Need to fill out summary.  Issue uncreated.")
         return
     print(str(issue))
+
+    current_sprint = get_current_sprint(conn)
+
     new_issue = conn.create_issue(
         project=issue.project,
         summary=issue.summary,
         description=issue.description,
         issuetype={"name": issue.issue_type},
-        assignee={"name": issue.assignee},
+        assignee={"accountId": "557058:e3520510-e28a-421b-8f92-10f7211b6947"},
+        customfield_10610=current_sprint.id,
     )
     update_current_issue(new_issue)
     try:
