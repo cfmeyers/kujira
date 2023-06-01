@@ -4,21 +4,20 @@
 import click
 
 from kujira.kujira import (
-    get_open_issues,
-    get_conn,
-    get_printable_issue,
-    get_issue_by_key,
-    transition_issue,
-    read_config,
-    create_new_issue,
-    get_issues_for_status,
-    get_printable_issue_brief,
     advance_issue,
-    get_all_epics,
-    associate_epic_to_issue,
-    get_users,
+    create_new_issue,
     edit_issue,
+    get_all_epics,
+    get_conn,
+    get_issue_by_key,
+    get_issues_for_status,
+    get_open_issues,
+    get_printable_issue,
+    get_printable_issue_brief,
+    get_users,
     print_issue_fields,
+    read_config,
+    transition_issue,
 )
 from kujira.models.user import UserModel
 
@@ -145,10 +144,12 @@ def add_epic_to_issue(issue_key, epic_key):
     except Exception as e:
         click.echo(f"Could not find an epic with the key {epic_key}")
     try:
-        associate_epic_to_issue(conn, issue, epic_issue)
-        issue = get_issue_by_key(conn, issue_key)
-        confirmed_epic_key = issue.fields.customfield_10910
-        click.echo(f"Added epic {confirmed_epic_key} to {issue_key}")
+
+        issue.update(fields={"parent": {"id": epic_issue.id}})
+        # associate_epic_to_issue(conn, issue, epic_issue)
+        # issue = get_issue_by_key(conn, issue_key)
+        # confirmed_epic_key = issue.fields.customfield_10910
+        # click.echo(f"Added epic {confirmed_epic_key} to {issue_key}")
     except Exception as e:
         breakpoint()
         click.echo(f"Could not add epic {epic_key} to {issue_key}")
@@ -168,7 +169,9 @@ def ls(status):
     config = read_config()
     conn = get_conn(config)
     for issue in get_issues_for_status(conn, status):
-        click.echo(get_printable_issue_brief(issue))
+        printable_issue = get_printable_issue_brief(issue)
+        if printable_issue is not None:
+            click.echo(printable_issue)
 
 
 if __name__ == "__main__":

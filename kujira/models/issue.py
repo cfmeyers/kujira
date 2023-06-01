@@ -126,7 +126,7 @@ def serialize(issue):
 def make_new_issue_template(config):
     issue = IssueModel(
         project=process_string(config.default_project),
-        assignee=process_string(config.user_key),
+        assignee=process_string(config.account_id),
         reporter="None",
         summary=process_string("pending..."),
         description=process_string("pending..."),

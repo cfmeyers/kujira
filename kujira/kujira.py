@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 
 """Main module."""
-from collections import namedtuple
 import configparser
 import os
+import sys
+from collections import namedtuple
 
 from jira import JIRA
 
-from kujira.models.issue import make_new_issue_template, IssueModel, get_updates
 from kujira.edit import edit
+from kujira.models.issue import IssueModel, get_updates, make_new_issue_template
 
 Config = namedtuple(
     "Config",
-    "user api_key server_url default_project default_issue_type default_priority user_key",
+    "user api_key server_url default_project default_issue_type default_priority account_id",
 )
 
 ISSUE_TYPES = (
@@ -38,7 +39,7 @@ def read_config(config_path="~/.jira/config.ini"):
         default_project=cfg["Jira"]["default_project"],
         default_issue_type=cfg["Jira"]["default_issue_type"],
         default_priority=cfg["Jira"]["default_priority"],
-        user_key=cfg["Jira"]["user_key"],
+        account_id=cfg["Jira"]["account_id"],
     )
 
 
@@ -77,7 +78,10 @@ def get_open_issues(conn):
     )
 
 
-def get_all_epics(conn, project_name="Infralytics"):
+def get_all_epics(conn, project_name=None):
+    if project_name is None:
+        config = read_config()
+        project_name = config.default_project
     yield from get_issues(conn, f'issuetype="Epic" AND project="{project_name}"')
 
 
@@ -90,13 +94,18 @@ def get_issue_by_key(conn, id):
     return conn.issue(id)
 
 
+# NEXT_ACTION = {
+#     "Backlog": "Start Progress",
+#     "To Do": "In Progress",
+#     "In Progress": "Code Review",
+#     "Code Review": "Ready For Deployment",
+#     "Ready For Deployment": "Done",
+#     "Resolved": "Deployed",
+# }
 NEXT_ACTION = {
-    "Backlog": "Start Progress",
-    "To Do": "In Progress",
-    "In Progress": "Code Review",
-    "Code Review": "Ready For Deployment",
-    "Ready For Deployment": "Done",
-    "Resolved": "Deployed",
+    "Backlog": "In Progress",
+    "In Progress": "In Review",
+    "In Review": "Done",
 }
 
 
@@ -140,19 +149,16 @@ def get_printable_issue_brief(issue):
     try:
         issue_model = IssueModel.from_api(issue, None)
     except Exception as e:
-        print(e)
-        return f"Did not find info for {issue}"
+        print(e, file=sys.stderr)
+        return None
     updated = issue_model.updated_at.date()
     return f"{issue_model.issue_id} | {issue_model.summary} ({updated})"
 
 
 def update_current_issue(issue):
+    print("Updating current issue")
     with open(os.path.expanduser("~/.jira/current_issue"), "w") as f:
         f.write(get_printable_issue_brief(issue) + "\n")
-
-
-def associate_epic_to_issue(conn, issue, epic_issue):
-    return conn.add_issues_to_epic(epic_issue.id, [issue.key])
 
 
 def edit_issue(conn, issue_key):
@@ -170,7 +176,7 @@ def print_issue_fields(issue):
 
 
 def get_current_sprint(conn):
-    board_id = 379
+    board_id = 137
     sprints = [
         s
         for s in conn.sprints(board_id)
@@ -186,7 +192,6 @@ def get_current_sprint(conn):
     return sprints[-1]
 
 
-# [~accountid:557058:e3520510-e28a-421b-8f92-10f7211b6947] check
 def create_new_issue(conn, config):
     issue_template = make_new_issue_template(config)
     issue = edit(issue_template)
@@ -195,20 +200,25 @@ def create_new_issue(conn, config):
         return
     print(str(issue))
 
-    current_sprint = get_current_sprint(conn)
-
+    print("Creating new issue")
     new_issue = conn.create_issue(
         project=issue.project,
         summary=issue.summary,
         description=issue.description,
         issuetype={"name": issue.issue_type},
-        assignee={"accountId": "557058:e3520510-e28a-421b-8f92-10f7211b6947"},
-        customfield_10610=current_sprint.id,
+        assignee={"accountId": config.account_id},
     )
+    print("New issue created")
     update_current_issue(new_issue)
     try:
+
         epic_issue = get_issue_by_key(conn, issue.epic_key)
-        val = associate_epic_to_issue(conn, new_issue, epic_issue)
+        if epic_issue:
+            print(f"The epic issue is {epic_issue}")
+            new_issue.update(fields={"parent": {"id": epic_issue.id}})
+        else:
+            print("No epic associated with ticket")
     except Exception as exc:
-        pass
+        print(exc)
+        print("Failed to update issue with epic")
     return new_issue
